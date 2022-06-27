@@ -10,6 +10,7 @@
   "dependencies": {
     "@heroicons/react": "^1.0.6",
     "@supabase/supabase-js": "^1.35.3",
+    "eslint-plugin-react-hooks": "^4.7.0-next-955cad9bc-20220623",
     "next": "12.1.6",
     "react": "18.2.0",
     "react-dom": "18.2.0",
