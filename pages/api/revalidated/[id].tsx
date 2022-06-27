@@ -6,10 +6,14 @@ type Data = {
 };
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse<Data>) {
-  console.log('Revalidataing notes page...');
+  console.log('Revalidataing details page...');
+  const {
+    query: { id },
+  } = req;
   let revalidated = false;
   try {
-    await res.unstable_revalidate('notes');
+    await res.unstable_revalidate(`/note/${id}`);
+    revalidated = true;
   } catch (error) {
     alert(error);
   }

@@ -1,7 +1,6 @@
-import React from 'react'
 import { useMutation } from 'react-query';
 import useStore from '../store';
-import { EditedComment } from '../types/types';
+import { Comment, EditedComment } from '../types/types';
 import { revalidateSingle } from '../utils/revalidation';
 import { supabase } from '../utils/supabase';
 
@@ -24,50 +23,49 @@ export const useMutateComment = () => {
         reset();
       },
     },
-  )
-    const updateCommentMutation = useMutation(
-      async (comment: EditedComment) => {
-        const { data, error } = await supabase
-          .from('comments')
-          .update({ content: comment.content })
-          .eq('id', comment.id);
-        if (error) throw new Error(error.message);
-        return data;
+  );
+  const updateCommentMutation = useMutation(
+    async (comment: EditedComment) => {
+      const { data, error } = await supabase
+        .from('comments')
+        .update({ content: comment.content })
+        .eq('id', comment.id);
+      if (error) throw new Error(error.message);
+      return data;
+    },
+    {
+      onSuccess: (res) => {
+        revalidateSingle(res[0].note_id);
+        reset();
+        alert('Successfully completed !!');
       },
-      {
-        onSuccess: (res) => {
-          revalidateSingle(res[0].note_id);
-          reset();
-          alert('Successfully completed !!');
-        },
-        onError: (err: any) => {
-          alert(err.message);
-          reset();
-        },
+      onError: (err: any) => {
+        alert(err.message);
+        reset();
       },
-    );
-    const deleteCommentMutation = useMutation(
-      async (id: string) => {
-        const { data, error } = await supabase.from('comments').delete().eq('id', id);
-        if (error) throw new Error(error.message);
-        return data;
+    },
+  );
+  const deleteCommentMutation = useMutation(
+    async (id: string) => {
+      const { data, error } = await supabase.from('comments').delete().eq('id', id);
+      if (error) throw new Error(error.message);
+      return data;
+    },
+    {
+      onSuccess: (res) => {
+        revalidateSingle(res[0].note_id);
+        reset();
+        alert('Successfully completed !!');
       },
-      {
-        onSuccess: (res) => {
-          revalidateSingle(res[0].note_id);
-          reset();
-          alert('Successfully completed !!');
-        },
-        onError: (err: any) => {
-          alert(err.message);
-          reset();
-        },
+      onError: (err: any) => {
+        alert(err.message);
+        reset();
       },
-    );
-    return {
-      deleteCommentMutation,
-      createCommentMutation,
-      updateCommentMutation,
-    };
-}
-
+    },
+  );
+  return {
+    deleteCommentMutation,
+    createCommentMutation,
+    updateCommentMutation,
+  };
+};
